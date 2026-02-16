@@ -365,8 +365,8 @@ const POS: React.FC<POSProps> = ({ products, currentUser, currentShift, onSaleCo
                         setMixedCashAmount(''); // Reset mixed state
                       }}
                       className={`px-2 py-2 text-xs rounded border transition-colors ${paymentMethod === method
-                          ? 'bg-gold-500 border-gold-600 text-white font-bold'
-                          : 'bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600 text-gray-600 dark:text-gray-300 hover:bg-neutral-100'
+                        ? 'bg-gold-500 border-gold-600 text-white font-bold'
+                        : 'bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600 text-gray-600 dark:text-gray-300 hover:bg-neutral-100'
                         }`}
                     >
                       {method}
@@ -376,8 +376,8 @@ const POS: React.FC<POSProps> = ({ products, currentUser, currentShift, onSaleCo
                 <button
                   onClick={() => setPaymentMethod(PaymentMethod.MIXED)}
                   className={`col-span-2 px-2 py-2 text-xs rounded border transition-colors flex items-center justify-center gap-2 ${paymentMethod === PaymentMethod.MIXED
-                      ? 'bg-purple-600 border-purple-700 text-white font-bold'
-                      : 'bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600 text-purple-600 dark:text-purple-400 hover:bg-neutral-100'
+                    ? 'bg-purple-600 border-purple-700 text-white font-bold'
+                    : 'bg-white dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600 text-purple-600 dark:text-purple-400 hover:bg-neutral-100'
                     }`}
                 >
                   <Split className="w-3 h-3" /> Método Excepcional (Dividir Pago)
