@@ -104,7 +104,9 @@ const App: React.FC = () => {
                 <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col`}>
                 <div className="p-6">
                     <div className="flex items-center gap-2 mb-8">
-                    <div className="w-10 h-10 bg-gold-500 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-gold-500/20">D</div>
+                    <div className="w-10 h-10 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-lg shadow-gold-500/10">
+                        <img src="/assets/DFIT_INV.jpeg" alt="Logo" className="w-full h-full object-cover" />
+                    </div>
                     <div>
                         <h1 className="text-xl font-bold dark:text-white leading-none">DFIT</h1>
                         <span className="text-xs text-gold-500 uppercase font-bold tracking-widest">Gym ERP</span>

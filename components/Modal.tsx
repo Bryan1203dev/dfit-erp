@@ -28,15 +28,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onConfirm, title, messag
         
         <div className="p-6 text-center">
             <div className="mb-4 flex justify-center">
-                {type === 'success' ? (
-                     <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
-                        <CheckCircle className="w-8 h-8 text-green-500" />
-                    </div>
-                ) : (
-                    <div className="w-16 h-16 bg-gold-500/20 rounded-full flex items-center justify-center">
-                        <AlertTriangle className="w-8 h-8 text-gold-500" />
-                    </div>
-                )}
+                <div className={`w-16 h-16 rounded-full overflow-hidden border-2 shadow-md ${type === 'success' ? 'border-green-500 shadow-green-500/20' : 'border-gold-500/80 shadow-gold-500/10'}`}>
+                    <img src="/assets/DFIT_INV.jpeg" alt="Logo" className="w-full h-full object-cover" />
+                </div>
             </div>
             
             <h4 className="text-xl font-bold text-white mb-2">{title}</h4>

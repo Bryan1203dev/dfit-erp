@@ -1,20 +1,28 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+<img width="1200" height="475" alt="GHBanner" src="public/assets/DFIT_INV.jpeg" />
 </div>
 
-# Run and deploy your AI Studio app
+# DFIT ERP
 
-This contains everything you need to run your app locally.
+## 📌 Descripción:
+Sistema de gestión de inventarios de DFIT.
 
-View your app in AI Studio: https://ai.studio/apps/1231fec5-af21-4ee7-ac22-18c4d5478975
+## 🛠️ Tecnologías y Herramientas
+* **Frontend:** React (Python, TypeScript, HTML5)
+* **Cloud & Backend (Serverless):** AWS Amplify, Amazon API Gateway, Amazon DynamoDB, Amazon S3
+* **Seguridad & Monitoreo:** AWS IAM, Amazon CloudWatch
+* **Automatización:** CI/CD integrado mediante AWS Amplify
 
-## Run Locally
+## 📐 Arquitectura Cloud Implementada
+1. El frontend en **React** se aloja y distribuye globalmente mediante **AWS Amplify**.
+2. Las peticiones del usuario se gestionan de forma segura a través de **API Gateway**.
+3. Los datos persistentes se almacenan en tablas optimizadas de **DynamoDB**.
+4. Los archivos estáticos o multimedia del cliente se guardan de forma segura en **Amazon S3**.
+5. Todo el entorno cuenta con monitoreo activo de errores mediante **CloudWatch** y roles restringidos en **IAM**.
 
-**Prerequisites:**  Node.js
+## 🤖 Flujo de Automatización y CI/CD (GitOps)
+El proyecto implementa un pipeline de Integración y Despliegue Continuo (CI/CD) totalmente automatizado que optimiza el ciclo de desarrollo:
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. **Control de Versiones Local:** Gestión del código fuente mediante la terminal del IDE utilizando comandos nativos de **Git** (git add, git commit, git push).
+2. **Disparador Automático (Webhook):** Al realizar un *push* hacia la rama principal en el repositorio remoto de **GitHub**, se activa un disparador automático hacia la nube.
+3. **Pipeline en la Nube (AWS Amplify):** AWS Amplify detecta el cambio, inicia la etapa de construcción (*build*), compila la aplicación en **React** y realiza el despliegue (*deploy*) en los servidores de producción de forma 100% automatizada y sin interrupciones del servicio.
