@@ -77,7 +77,7 @@ const App: React.FC = () => {
       onClick={() => { setView(id); setSidebarOpen(false); }}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
         view === id 
-        ? 'bg-gradient-to-r from-gold-500 to-gold-600 text-white shadow-lg shadow-gold-500/20' 
+        ? 'bg-gradient-to-r from-red-800 to-red-600 text-white shadow-lg shadow-red-500/25' 
         : 'text-gray-500 dark:text-gray-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
       }`}
     >
@@ -105,10 +105,12 @@ const App: React.FC = () => {
                 <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col`}>
                 <div className="p-6">
                     <div className="flex items-center gap-2 mb-8">
-                    <div className="w-10 h-10 bg-gold-500 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-gold-500/20">D</div>
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden border border-red-600/30 shadow-lg shadow-red-500/20 bg-neutral-900">
+                      <img src="/assets/DFIT_INV.jpeg" alt="Logo" className="w-full h-full object-cover" />
+                    </div>
                     <div>
                         <h1 className="text-xl font-bold dark:text-white leading-none">DFIT</h1>
-                        <span className="text-xs text-gold-500 uppercase font-bold tracking-widest">Gym ERP</span>
+                        <span className="text-xs text-red-500 uppercase font-bold tracking-widest">Gym ERP</span>
                     </div>
                     </div>
 
