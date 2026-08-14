@@ -398,17 +398,19 @@ const ShiftManager: React.FC<ShiftManagerProps> = ({ currentUser, currentShift, 
     XLSX.utils.book_append_sheet(wb, wsHist, "Historial Ventas");
 
     // 8. Historial Acciones (Logs)
-    const logs = dataService.getLogs();
-    const logData = logs.map(l => ({
-        Fecha: new Date(l.timestamp).toLocaleString(),
-        Turno: l.userName,
-        Modulo: l.module,
-        Accion: l.action,
-        Detalle: l.detail,
-        Producto: l.products || ''
-    }));
-    const wsLogs = XLSX.utils.json_to_sheet(logData);
-    XLSX.utils.book_append_sheet(wb, wsLogs, "Historial Acciones");
+    if (currentUser.name !== 'Colaborador Mañana' && currentUser.name !== 'Colaborador Tarde') {
+        const logs = dataService.getLogs();
+        const logData = logs.map(l => ({
+            Fecha: new Date(l.timestamp).toLocaleString(),
+            Turno: l.userName,
+            Modulo: l.module,
+            Accion: l.action,
+            Detalle: l.detail,
+            Producto: l.products || ''
+        }));
+        const wsLogs = XLSX.utils.json_to_sheet(logData);
+        XLSX.utils.book_append_sheet(wb, wsLogs, "Historial Acciones");
+    }
 
     // Write File with dynamic name
     const userNameClean = currentUser.name.replace(/\s+/g, '_');
