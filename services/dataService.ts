@@ -46,35 +46,64 @@ export class DataService {
   }
 
   private loadData() {
-    const p = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
-    this.products = p ? JSON.parse(p) : INITIAL_PRODUCTS;
+    try {
+      const p = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
+      if (p) {
+        this.products = JSON.parse(p);
+      } else {
+        this.products = [...INITIAL_PRODUCTS];
+        this.saveData(STORAGE_KEYS.PRODUCTS, this.products);
+      }
+    } catch (e) {
+      console.error('Error loading products from storage:', e);
+      this.products = [...INITIAL_PRODUCTS];
+      this.saveData(STORAGE_KEYS.PRODUCTS, this.products);
+    }
 
-    const s = localStorage.getItem(STORAGE_KEYS.SALES);
-    this.sales = s ? JSON.parse(s) : [];
+    try {
+      const s = localStorage.getItem(STORAGE_KEYS.SALES);
+      this.sales = s ? JSON.parse(s) : [];
+    } catch (e) { this.sales = []; }
 
-    const m = localStorage.getItem(STORAGE_KEYS.MOVEMENTS);
-    this.movements = m ? JSON.parse(m) : [];
+    try {
+      const m = localStorage.getItem(STORAGE_KEYS.MOVEMENTS);
+      this.movements = m ? JSON.parse(m) : [];
+    } catch (e) { this.movements = []; }
 
-    const sh = localStorage.getItem(STORAGE_KEYS.SHIFTS);
-    this.shifts = sh ? JSON.parse(sh) : [];
+    try {
+      const sh = localStorage.getItem(STORAGE_KEYS.SHIFTS);
+      this.shifts = sh ? JSON.parse(sh) : [];
+    } catch (e) { this.shifts = []; }
 
-    const a = localStorage.getItem(STORAGE_KEYS.AUDITS);
-    this.audits = a ? JSON.parse(a) : [];
+    try {
+      const a = localStorage.getItem(STORAGE_KEYS.AUDITS);
+      this.audits = a ? JSON.parse(a) : [];
+    } catch (e) { this.audits = []; }
 
-    const mem = localStorage.getItem(STORAGE_KEYS.MEMBERSHIPS);
-    this.memberships = mem ? JSON.parse(mem) : [];
+    try {
+      const mem = localStorage.getItem(STORAGE_KEYS.MEMBERSHIPS);
+      this.memberships = mem ? JSON.parse(mem) : [];
+    } catch (e) { this.memberships = []; }
 
-    const abo = localStorage.getItem(STORAGE_KEYS.ABONOS);
-    this.abonos = abo ? JSON.parse(abo) : [];
+    try {
+      const abo = localStorage.getItem(STORAGE_KEYS.ABONOS);
+      this.abonos = abo ? JSON.parse(abo) : [];
+    } catch (e) { this.abonos = []; }
 
-    const exp = localStorage.getItem(STORAGE_KEYS.EXPENSES);
-    this.expenses = exp ? JSON.parse(exp) : [];
+    try {
+      const exp = localStorage.getItem(STORAGE_KEYS.EXPENSES);
+      this.expenses = exp ? JSON.parse(exp) : [];
+    } catch (e) { this.expenses = []; }
 
-    const ext = localStorage.getItem(STORAGE_KEYS.EXTRAS);
-    this.extras = ext ? JSON.parse(ext) : [];
+    try {
+      const ext = localStorage.getItem(STORAGE_KEYS.EXTRAS);
+      this.extras = ext ? JSON.parse(ext) : [];
+    } catch (e) { this.extras = []; }
 
-    const l = localStorage.getItem(STORAGE_KEYS.LOGS);
-    this.logs = l ? JSON.parse(l) : [];
+    try {
+      const l = localStorage.getItem(STORAGE_KEYS.LOGS);
+      this.logs = l ? JSON.parse(l) : [];
+    } catch (e) { this.logs = []; }
   }
 
   private saveData(key: string, data: any) {
@@ -239,12 +268,54 @@ export class DataService {
     }
   }
 
-  deleteSale(saleId: string): void {
-      this.sales = this.sales.filter(s => s.id !== saleId);
-      this.saveData(STORAGE_KEYS.SALES, this.sales);
+  deleteSale(saleId: string, userId?: string): void {
+      const sale = this.sales.find(s => s.id === saleId);
+      if (sale) {
+          // Restore inventory stock for non-free-pass items
+          if (!sale.isFreePass && sale.items && sale.items.length > 0) {
+              sale.items.forEach(item => {
+                  if (item.productId && item.productId !== 'FREE-PASS') {
+                      this.updateStock(
+                          item.productId,
+                          item.quantity,
+                          'IN',
+                          userId || sale.userId,
+                          `Restauración por anulación de Venta #${sale.id}`
+                      );
+                  }
+              });
+          }
+
+          this.sales = this.sales.filter(s => s.id !== saleId);
+          this.saveData(STORAGE_KEYS.SALES, this.sales);
+
+          const productsStr = sale.items.map(item => `${item.productName} (x${item.quantity})`).join(', ');
+          this.logAction(
+              userId || sale.userId,
+              'Punto de Venta',
+              'ELIMINAR',
+              `Venta anulada (#${sale.id}) - Monto: S/ ${sale.totalAmount.toFixed(2)}. Stock restaurado a inventario.`,
+              productsStr
+          );
+      }
   }
 
-  clearAllSales(): void {
+  clearAllSales(userId?: string): void {
+      this.sales.forEach(sale => {
+          if (!sale.isFreePass && sale.items) {
+              sale.items.forEach(item => {
+                  if (item.productId && item.productId !== 'FREE-PASS') {
+                      this.updateStock(
+                          item.productId,
+                          item.quantity,
+                          'IN',
+                          userId || sale.userId,
+                          'Restauración por eliminación masiva de ventas'
+                      );
+                  }
+              });
+          }
+      });
       this.sales = [];
       this.saveData(STORAGE_KEYS.SALES, this.sales);
   }

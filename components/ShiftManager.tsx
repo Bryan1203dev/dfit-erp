@@ -21,6 +21,7 @@ const ShiftManager: React.FC<ShiftManagerProps> = ({ currentUser, currentShift, 
   const [useDateFilter, setUseDateFilter] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [selectedUserFilter, setSelectedUserFilter] = useState<string>('ALL');
   
   // Modal State
   const [modalOpen, setModalOpen] = useState(false);
@@ -106,24 +107,26 @@ const ShiftManager: React.FC<ShiftManagerProps> = ({ currentUser, currentShift, 
 
   const { start: filterStart, end: filterEnd } = getFilterTimestamps();
 
+  const matchesUserFilter = (userId: string) => selectedUserFilter === 'ALL' || userId === selectedUserFilter;
+
   const relevantSales = useDateFilter
-      ? dataService.getSales().filter(s => s.timestamp >= filterStart && s.timestamp <= filterEnd)
+      ? dataService.getSales().filter(s => s.timestamp >= filterStart && s.timestamp <= filterEnd && matchesUserFilter(s.userId))
       : (isAdmin ? dataService.getTodaySales() : (currentShift ? dataService.getShiftSales(currentShift.id) : []));
 
   const relevantMemberships = useDateFilter
-      ? dataService.getMemberships().filter(m => m.timestamp >= filterStart && m.timestamp <= filterEnd)
+      ? dataService.getMemberships().filter(m => m.timestamp >= filterStart && m.timestamp <= filterEnd && matchesUserFilter(m.userId))
       : (isAdmin ? dataService.getTodayMemberships() : (currentShift ? dataService.getShiftMemberships(currentShift.id) : []));
 
   const relevantAbonos = useDateFilter
-      ? dataService.getAbonos().filter(a => a.timestamp >= filterStart && a.timestamp <= filterEnd)
+      ? dataService.getAbonos().filter(a => a.timestamp >= filterStart && a.timestamp <= filterEnd && matchesUserFilter(a.userId))
       : (isAdmin ? dataService.getTodayAbonos() : (currentShift ? dataService.getShiftAbonos(currentShift.id) : []));
 
   const relevantExpenses = useDateFilter
-      ? dataService.getExpenses().filter(e => e.timestamp >= filterStart && e.timestamp <= filterEnd)
+      ? dataService.getExpenses().filter(e => e.timestamp >= filterStart && e.timestamp <= filterEnd && matchesUserFilter(e.userId))
       : (isAdmin ? dataService.getTodayExpenses() : (currentShift ? dataService.getShiftExpenses(currentShift.id) : []));
 
   const relevantExtras = useDateFilter
-      ? dataService.getExtras().filter(e => e.timestamp >= filterStart && e.timestamp <= filterEnd)
+      ? dataService.getExtras().filter(e => e.timestamp >= filterStart && e.timestamp <= filterEnd && matchesUserFilter(e.userId))
       : (isAdmin ? dataService.getTodayExtras() : (currentShift ? dataService.getShiftExtras(currentShift.id) : []));
 
   // Splits for Details (Excluding collaborator advances as they are only accounting records)
@@ -160,7 +163,7 @@ const ShiftManager: React.FC<ShiftManagerProps> = ({ currentUser, currentShift, 
   const cashExtras = relevantExtras.filter(e => e.paymentMethod === PaymentMethod.CASH).reduce((sum, e) => sum + e.amount, 0);
   
   const currentStartCash = useDateFilter
-      ? dataService.getShifts().filter(s => s.startTime >= filterStart && s.startTime <= filterEnd).reduce((sum, s) => sum + s.startCash, 0)
+      ? dataService.getShifts().filter(s => s.startTime >= filterStart && s.startTime <= filterEnd && matchesUserFilter(s.userId)).reduce((sum, s) => sum + s.startCash, 0)
       : (currentShift ? currentShift.startCash : 0); 
   
   // Total Income (Cash)
@@ -397,8 +400,8 @@ const ShiftManager: React.FC<ShiftManagerProps> = ({ currentUser, currentShift, 
     const wsHist = XLSX.utils.json_to_sheet(histData);
     XLSX.utils.book_append_sheet(wb, wsHist, "Historial Ventas");
 
-    // 8. Historial Acciones (Logs)
-    if (currentUser.name !== 'Colaborador Mañana' && currentUser.name !== 'Colaborador Tarde') {
+    // 8. Historial Acciones (Logs) - Solo para Admin
+    if (currentUser.role === Role.ADMIN) {
         const logs = dataService.getLogs();
         const logData = logs.map(l => ({
             Fecha: new Date(l.timestamp).toLocaleString(),
@@ -529,7 +532,7 @@ const ShiftManager: React.FC<ShiftManagerProps> = ({ currentUser, currentShift, 
                 </div>
 
                 {useDateFilter && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700 animate-in slide-in-from-top-2 duration-200">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700 animate-in slide-in-from-top-2 duration-200">
                         <div>
                             <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Fecha Inicio / Un Solo Día</label>
                             <input 
@@ -549,10 +552,23 @@ const ShiftManager: React.FC<ShiftManagerProps> = ({ currentUser, currentShift, 
                                 disabled={!startDate}
                             />
                         </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Colaborador / Turno</label>
+                            <select
+                                value={selectedUserFilter}
+                                onChange={(e) => setSelectedUserFilter(e.target.value)}
+                                className="w-full p-2.5 text-sm rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 dark:text-white focus:ring-2 focus:ring-gold-500 focus:outline-none"
+                            >
+                                <option value="ALL">Todos los Turnos</option>
+                                {USERS.map(u => (
+                                    <option key={u.id} value={u.id}>{u.name}</option>
+                                ))}
+                            </select>
+                        </div>
                         <div className="flex items-end">
                             <button
                                 type="button"
-                                onClick={() => { setStartDate(''); setEndDate(''); setUseDateFilter(false); }}
+                                onClick={() => { setStartDate(''); setEndDate(''); setSelectedUserFilter('ALL'); setUseDateFilter(false); }}
                                 className="w-full py-2.5 bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-gray-800 dark:text-white rounded-lg text-xs font-bold uppercase transition-colors"
                             >
                                 Limpiar Filtro

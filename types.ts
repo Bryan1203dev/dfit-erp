@@ -3,6 +3,7 @@ export enum Role {
   ADMIN = 'ADMIN',
   MORNING = 'MORNING',
   AFTERNOON = 'AFTERNOON',
+  NIGHT = 'NIGHT',
 }
 
 export enum PaymentMethod {

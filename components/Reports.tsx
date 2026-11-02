@@ -121,9 +121,9 @@ const Reports: React.FC<ReportsProps> = ({ sales, currentUser, onUpdate }) => {
         // Deletion Logic
         if (tab === 'HISTORY') {
             if (deleteId === 'ALL') {
-                dataService.clearAllSales();
+                dataService.clearAllSales(currentUser.id);
             } else {
-                dataService.deleteSale(deleteId);
+                dataService.deleteSale(deleteId, currentUser.id);
             }
         } else if (tab === 'LOGS') {
             if (deleteId === 'ALL') {

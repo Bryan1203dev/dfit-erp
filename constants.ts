@@ -5,6 +5,7 @@ export const USERS: User[] = [
   { id: 'u1', name: 'Administrador General', role: Role.ADMIN, pin: '120390' },
   { id: 'u2', name: 'Colaborador Mañana', role: Role.MORNING, pin: '1234' },
   { id: 'u3', name: 'Colaborador Tarde', role: Role.AFTERNOON, pin: '4567' },
+  { id: 'u4', name: 'Colaborador Noche', role: Role.NIGHT, pin: '1591' },
 ];
 
 export const INITIAL_PRODUCTS: Product[] = [
